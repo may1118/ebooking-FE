@@ -1,6 +1,5 @@
 <template>
-  hello
-  <a-button type="primary">Primary</a-button>
+  app.vue
   <router-view />
 </template>
 
