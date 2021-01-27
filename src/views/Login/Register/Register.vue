@@ -10,47 +10,42 @@
         class="register-form-content"
         layout="vertical"
         :model="reaRegisterInput"
-        :rules="userNameRules"
+        :rules="rules"
       >
         <!-- 账号 -->
         <a-form-item
-          v-bind="validateInfos.userName"
           class="components-input-demo-presuffix"
           name="userName"
-          ref="userName"
         >
           <a-input
             :placeholder="registerConfig.userNameInput.placeholder"
             v-model:value="reaRegisterInput.userName"
-            required
           >
             <template #prefix><user-outlined type="user"/></template>
           </a-input>
         </a-form-item>
         <!-- 密码 -->
         <a-form-item
-          v-bind="validateInfos.userPassword"
           class="components-input-demo-presuffix"
+          name="userPassword"
         >
           <a-input
             :placeholder="registerConfig.userPasswordInput.placeholder"
             v-model:value="reaRegisterInput.userPassword"
             type="password"
-            ref="userPasswordInput"
           >
             <template #prefix><LockOutlined type="password"/></template>
           </a-input>
         </a-form-item>
         <!-- 确认密码 -->
         <a-form-item
-          v-bind="validateInfos.userPasswordComfirm"
           class="components-input-demo-presuffix"
+          name="userPasswordComfirm"
         >
           <a-input
             :placeholder="registerConfig.userPasswordComfirmInput.placeholder"
             v-model:value="reaRegisterInput.userPasswordComfirm"
             type="password"
-            ref="userPasswordComfirmInput"
           >
             <template #prefix><LockOutlined type="comfirmPassword"/></template>
           </a-input>
@@ -73,7 +68,6 @@
           </a-form-item>
           <a-form-item
             class="register-form-rawRight"
-            v-bind="validateInfos.userPhone"
           >
             <a-input
               v-model:value="reaRegisterInput.userPhone"
@@ -83,7 +77,7 @@
         </a-input-group>
 
         <!-- 获取手机验证码 -->
-        <a-form-item v-bind="validateInfos.phoneVertifyCode">
+        <a-form-item>
           <div class="register-form-rawItem">
             <a-input v-model:value="reaRegisterInput.phoneVertifyCode" />
             <a-button type="primary">
@@ -93,7 +87,6 @@
         </a-form-item>
         <!-- 邮箱 -->
         <a-form-item
-          v-bind="validateInfos.userEmail"
           class="components-input-demo-presuffix"
         >
           <a-input
@@ -106,7 +99,7 @@
           </a-input>
         </a-form-item>
         <!-- 获取邮箱验证码 -->
-        <a-form-item v-bind="validateInfos.emailVertifyCode">
+        <a-form-item>
           <div class="register-form-rawItem">
             <a-input v-model:value="reaRegisterInput.emailVertifyCode" />
             <a-button
@@ -121,7 +114,6 @@
         <a-form-item>
           <a-button
             type="primary"
-            @click="handleClickRegister($event, validate, reaRegisterInput)"
           >
             {{ registerConfig.userInputButton }}
           </a-button>
@@ -137,16 +129,14 @@ import {
   LockOutlined,
   MailOutlined
 } from "@ant-design/icons-vue";
-import { useForm } from "@ant-design-vue/use";
 import { reactive } from "vue";
 
-import {
-  registerConfig,
-  registerValidate,
-  registerRules as rules
-} from "@/config/pages/register";
-import { handleClickRegister, clickGetEmailCode } from "./RegisterFuc";
+import { registerConfig } from "@/config/pages/register";
 import { UserConfig } from "@/@type/interfaceRegister";
+import {
+  clickGetEmailCode,
+  needGetInputRules
+} from "./RegisterFuc";
 
 export default {
   setup() {
@@ -160,30 +150,14 @@ export default {
       userEmail: "",
       emailVertifyCode: ""
     });
-    // 验证表单逻辑
-    const { resetFields, validate, validateInfos } = useForm(
-      reaRegisterInput,
-      reactive(registerValidate)
-    );
-    const userNameRules = {
-      userName: [
-          { required: true, message: 'Please input Activity name', trigger: 'blur' },
-          { min: 3, max: 5, message: 'Length should be 3 to 5', trigger: 'blur' },
-        ]
-    };
+    const rules = needGetInputRules(reaRegisterInput);
 
     return {
       reaRegisterInput,
       registerConfig,
-      // validate infos
-      resetFields,
-      validate,
-      validateInfos,
       // form rules
       rules,
-      userNameRules,
       // handle functions
-      handleClickRegister,
       clickGetEmailCode
     };
   },

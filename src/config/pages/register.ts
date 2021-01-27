@@ -1,44 +1,17 @@
-export const registerValidate = {
-  userName: [{
-    required: true,
-    message: "账号不能为空"
-  }],
-  userPassword: [{
-    required: true,
-    message: "密码不能为空"
-  }],
-  userPasswordComfirm: [{
-    required: true,
-    message: "密码确认不能为空"
-  }],
-  userPhone: [{
-    required: true,
-    message: "请输入手机号码"
-  }],
-  phoneVertifyCode: [{
-    required: true,
-    message: "请输入手机验证码"
-  }],
-  userEmail: [{
-    required: true,
-    message: "请输入邮箱"
-  }],
-  emailVertifyCode: [{
-    required: true,
-    message: "请输入邮箱验证码"
-  }],
-}
-
-
 export const registerConfig = {
   userNameInput: {
     placeholder: "账号，5-20位数字、字母或下划线",
+    validate: "请输入正确账号",
+    regex: /^([0-9a-zA-Z]|_){5,20}$/
   },
   userPasswordInput: {
     placeholder: "密码，6-16位，必须包含数字和字母",
+    validate: "请输入正确密码",
+    regex: /(?![0-9]+$)(?![a-zA-Z]+$)^[0-9a-zA-Z]{6,20}$/
   },
   userPasswordComfirmInput: {
     placeholder: "确认密码，6-16位，必须包含数字和字母",
+    validate: "两次密码部匹配"
   },
   userPhoneAreaSelect: [{
       area: "中国",
@@ -56,28 +29,12 @@ export const registerConfig = {
   ],
   userGetVeritifyCode: "获取验证码",
   userGetPhoneInput: {
-    placeholder: "使用者手机号码"
+    placeholder: "使用者手机号码",
+    validate: "请输入正确手机号"
   },
   userGetEmail: {
     placeholder: "邮箱，常用的邮箱账号",
+    validate: "请输入正确邮箱"
   },
   userInputButton: "注册"
-}
-
-const validatePass = async (rule: any, value: any) => {
-  console.log('rule: ', rule)
-  console.log('value: ', value)
-  // if (value === '') {
-  //   return Promise.reject('Please input the password');
-  // } else {
-  //   if (this.ruleForm.checkPass !== '') {
-  //     this.$refs.ruleForm.validateField('checkPass');
-  //   }
-  //   return Promise.resolve();
-  // }
-  return Promise.reject("Two inputs don't match!");
-};
-
-export const registerRules = {
-  userName: [{ validator: validatePass, trigger: "change" }]
 }
