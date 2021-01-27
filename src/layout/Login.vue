@@ -4,7 +4,7 @@
 </template>
 
 <script>
-import Register from '@/views/Login/Register/Register'
+import Register from '@/views/Login/Register/Register.vue'
 
 
 export default {
