@@ -11,6 +11,7 @@
         layout="vertical"
         :model="reaRegisterInput"
         :rules="rules"
+        @finish="handleFinish"
       >
         <!-- 账号 -->
         <a-form-item
@@ -25,10 +26,7 @@
           </a-input>
         </a-form-item>
         <!-- 密码 -->
-        <a-form-item
-          class="components-input-demo-presuffix"
-          name="userPassword"
-        >
+        <a-form-item class="components-input-demo-presuffix" name="userPassword">
           <a-input
             :placeholder="registerConfig.userPasswordInput.placeholder"
             v-model:value="reaRegisterInput.userPassword"
@@ -66,9 +64,7 @@
               </a-select-option>
             </a-select>
           </a-form-item>
-          <a-form-item
-            class="register-form-rawRight"
-          >
+          <a-form-item name="userPhone" class="register-form-rawRight">
             <a-input
               v-model:value="reaRegisterInput.userPhone"
               :placeholder="registerConfig.userGetPhoneInput.placeholder"
@@ -77,32 +73,30 @@
         </a-input-group>
 
         <!-- 获取手机验证码 -->
-        <a-form-item>
+        <a-form-item name="phoneVertify">
           <div class="register-form-rawItem">
             <a-input v-model:value="reaRegisterInput.phoneVertifyCode" />
-            <a-button type="primary">
+            <a-button :disabled="!refPhoneIsVertify" type="primary">
               {{ registerConfig.userGetVeritifyCode }}
             </a-button>
           </div>
         </a-form-item>
         <!-- 邮箱 -->
-        <a-form-item
-          class="components-input-demo-presuffix"
-        >
+        <a-form-item name="userEmail" class="components-input-demo-presuffix">
           <a-input
             :placeholder="registerConfig.userGetEmail.placeholder"
             v-model:value="reaRegisterInput.userEmail"
             type="email"
-            ref="userEmailInput"
           >
             <template #prefix><MailOutlined type="email"/></template>
           </a-input>
         </a-form-item>
         <!-- 获取邮箱验证码 -->
-        <a-form-item>
+        <a-form-item name="emailVertify">
           <div class="register-form-rawItem">
             <a-input v-model:value="reaRegisterInput.emailVertifyCode" />
             <a-button
+              :disabled="!refEmailIsVertify"
               type="primary"
               @click="clickGetEmailCode(reaRegisterInput.userEmail, 'email')"
             >
@@ -112,9 +106,7 @@
         </a-form-item>
         <!-- 注册按钮 -->
         <a-form-item>
-          <a-button
-            type="primary"
-          >
+          <a-button type="primary" html-type="submit">
             {{ registerConfig.userInputButton }}
           </a-button>
         </a-form-item>
@@ -150,15 +142,22 @@ export default {
       userEmail: "",
       emailVertifyCode: ""
     });
-    const rules = needGetInputRules(reaRegisterInput);
+    const { rules, refPhoneIsVertify, refEmailIsVertify } = needGetInputRules(reaRegisterInput);
+
+    const handleFinish = (values: any) => {
+      // 发送请求
+    }
 
     return {
       reaRegisterInput,
       registerConfig,
       // form rules
       rules,
+      refPhoneIsVertify,
+      refEmailIsVertify,
       // handle functions
-      clickGetEmailCode
+      clickGetEmailCode,
+      handleFinish,
     };
   },
   components: {

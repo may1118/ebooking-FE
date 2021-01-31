@@ -11,7 +11,7 @@ export const registerConfig = {
   },
   userPasswordComfirmInput: {
     placeholder: "确认密码，6-16位，必须包含数字和字母",
-    validate: "两次密码部匹配"
+    validate: "请输入正确密码"
   },
   userPhoneAreaSelect: [{
       area: "中国",
@@ -30,11 +30,13 @@ export const registerConfig = {
   userGetVeritifyCode: "获取验证码",
   userGetPhoneInput: {
     placeholder: "使用者手机号码",
-    validate: "请输入正确手机号"
+    validate: "请输入正确手机号",
+    regex: /^1(?:3\d|4[4-9]|5[0-35-9]|6[67]|7[013-8]|8\d|9\d)\d{8}$/
   },
   userGetEmail: {
     placeholder: "邮箱，常用的邮箱账号",
-    validate: "请输入正确邮箱"
+    validate: "请输入正确邮箱",
+    regex: /^[a-z\d]+(\.[a-z\d]+)*@([\da-z](-[\da-z])?)+(\.{1,2}[a-z]+)+$/
   },
   userInputButton: "注册"
 }
