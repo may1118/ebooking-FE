@@ -14,10 +14,7 @@
         @finish="handleFinish"
       >
         <!-- 账号 -->
-        <a-form-item
-          class="components-input-demo-presuffix"
-          name="userName"
-        >
+        <a-form-item class="components-input-demo-presuffix" name="userName">
           <a-input
             :placeholder="registerConfig.userNameInput.placeholder"
             v-model:value="reaRegisterInput.userName"
@@ -26,7 +23,10 @@
           </a-input>
         </a-form-item>
         <!-- 密码 -->
-        <a-form-item class="components-input-demo-presuffix" name="userPassword">
+        <a-form-item
+          class="components-input-demo-presuffix"
+          name="userPassword"
+        >
           <a-input
             :placeholder="registerConfig.userPasswordInput.placeholder"
             v-model:value="reaRegisterInput.userPassword"
@@ -73,7 +73,7 @@
         </a-input-group>
 
         <!-- 获取手机验证码 -->
-        <a-form-item name="phoneVertify">
+        <a-form-item name="phoneVertifyCode">
           <div class="register-form-rawItem">
             <a-input v-model:value="reaRegisterInput.phoneVertifyCode" />
             <a-button :disabled="!refPhoneIsVertify" type="primary">
@@ -92,7 +92,7 @@
           </a-input>
         </a-form-item>
         <!-- 获取邮箱验证码 -->
-        <a-form-item name="emailVertify">
+        <a-form-item name="emailVertifyCode">
           <div class="register-form-rawItem">
             <a-input v-model:value="reaRegisterInput.emailVertifyCode" />
             <a-button
@@ -119,34 +119,33 @@
 import {
   UserOutlined,
   LockOutlined,
-  MailOutlined
-} from "@ant-design/icons-vue";
-import { reactive } from "vue";
+  MailOutlined,
+} from '@ant-design/icons-vue';
+import { reactive } from 'vue';
 
-import { registerConfig } from "@/config/pages/register";
-import { UserConfig } from "@/@type/interfaceRegister";
-import {
-  clickGetEmailCode,
-  needGetInputRules
-} from "./RegisterFuc";
+import { registerConfig } from '@/config/pages/register';
+import { UserConfig } from '@/@type/interfaceRegister';
+import { clickGetEmailCode, needGetInputRules } from './RegisterFuc';
 
 export default {
   setup() {
     const reaRegisterInput: UserConfig = reactive({
-      userName: "",
-      userPassword: "",
-      userPasswordComfirm: "",
+      userName: 'mzyTest11',
+      userPassword: 'mazhenyan1118',
+      userPasswordComfirm: 'mazhenyan1118',
       selectArea: 0,
-      userPhone: "",
-      phoneVertifyCode: "",
-      userEmail: "",
-      emailVertifyCode: ""
+      userPhone: '18890062982',
+      phoneVertifyCode: '123456',
+      userEmail: '1422073266@qq.com',
+      emailVertifyCode: '',
     });
-    const { rules, refPhoneIsVertify, refEmailIsVertify } = needGetInputRules(reaRegisterInput);
+    const { rules, refPhoneIsVertify, refEmailIsVertify } = needGetInputRules(
+      reaRegisterInput
+    );
 
     const handleFinish = (values: any) => {
       // 发送请求
-    }
+    };
 
     return {
       reaRegisterInput,
@@ -163,8 +162,8 @@ export default {
   components: {
     UserOutlined,
     LockOutlined,
-    MailOutlined
-  }
+    MailOutlined,
+  },
 };
 </script>
 

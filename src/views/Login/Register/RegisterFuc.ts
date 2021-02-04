@@ -21,11 +21,8 @@ export const needGetInputRules = (input: UserConfig) => {
       callback: (error: string | string[] | void) => void
     ) => {
       const regex = registerConfig.userNameInput.regex
-      if(!regex.test(value)){
-        return Promise.reject(registerConfig.userNameInput.validate);
-      }else {
-        return Promise.resolve();
-      }
+      const errorInfo = registerConfig.userNameInput.validate
+      return regex.test(value) ? Promise.resolve() : Promise.reject(errorInfo)
   };
   const validatePassword = async (
     rule: Rules,
@@ -33,11 +30,8 @@ export const needGetInputRules = (input: UserConfig) => {
     callback: (error: string | string[] | void) => void
   ) => {
     const regex = registerConfig.userPasswordInput.regex
-    if(!regex.test(value)){
-      return Promise.reject(registerConfig.userPasswordInput.validate);
-    }else {
-      return Promise.resolve();
-    }
+    const errorInfo = registerConfig.userPasswordInput.validate
+    return regex.test(value) ? Promise.resolve() : Promise.reject(errorInfo)
 };
   const userPasswordComfirm = async (
     rule: Rules,
@@ -77,6 +71,15 @@ export const needGetInputRules = (input: UserConfig) => {
       return Promise.resolve();
     }
   };
+  const validateYZM = async (
+    rule: Rules,
+    value: any,
+    callback: (error: string | string[] | void) => void
+  ) => {
+    const regex = /^[0-9]{1,}$/;
+    return regex.test(value) ? Promise.resolve() : Promise.reject("请输入验证码")
+  };
+
   return {
     rules: {
       userName: [{ validator: validateUserName, trigger: "change" }],
@@ -96,13 +99,13 @@ export const needGetInputRules = (input: UserConfig) => {
         validator: validateEmail,
         trigger: "change"
       }],
-      phoneVertify: [{
-        required: true,
-        message: "请输入手机验证码",
+      phoneVertifyCode: [{
+        validator: validateYZM,
+        trigger: "change"
       }],
-      emailVertify: [{
-        required: true,
-        message: "请输入邮箱验证码",
+      emailVertifyCode: [{
+        validator: validateYZM,
+        trigger: "change"
       }],
     },
     refPhoneIsVertify,
