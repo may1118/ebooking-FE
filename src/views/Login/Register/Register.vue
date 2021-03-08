@@ -145,6 +145,7 @@ export default {
 
     const handleFinish = (values: any) => {
       // 发送请求
+      console.log(values)
     };
 
     return {

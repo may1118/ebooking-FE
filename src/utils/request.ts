@@ -1,4 +1,5 @@
 import axios from 'axios';
+import qs from 'qs'
 
 const service = axios.create({
   baseURL: process.env.VUE_APP_BASE_API,
@@ -8,6 +9,9 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // 加上cookie
+    if(config.method === 'post') {
+      config.data = qs.stringify(config.data);
+    }
 
     return config;
   },
@@ -27,11 +31,11 @@ service.interceptors.request.use(
 service.interceptors.response.use(
   response => {
     const res = response.data
-    if(res.status === 0){
+    if(res.code === 0){
       // 证明请求成功，直接返回data里面的信息
       return Promise.resolve(res.data);
     } else{
-      console.log('request fail' + res.msg)
+      console.log('request fail ' + res.msg)
       return Promise.reject(res.msg)
     }
   },

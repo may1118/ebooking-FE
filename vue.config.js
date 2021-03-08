@@ -19,6 +19,13 @@ module.exports = {
         pathRewrite: {
           "^/mock ": "./static/mock" // 将资源放置在public/mock下
         }
+      },
+      "/api": {
+        target: "http://127.0.0.1:3000",
+        changeOrigin: true,
+        pathRewrite: {
+          "^/api": ""
+        }
       }
     }
   },

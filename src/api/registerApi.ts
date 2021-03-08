@@ -4,15 +4,16 @@ import { UserConfig } from '@/@type/interfaceRegister';
 
 export function getPhoneVertify(phone: string) {
   return request({
-    url: '',
-    method: 'post',
   });
 }
 
-export function getEmailVertify(email: string) {
+export function getEmailVertify(email: string): Promise<any> {
   return request({
-    url: '',
+    url: '/api/email/get',
     method: 'post',
+    data: {
+      email: email
+    }
   });
 }
 

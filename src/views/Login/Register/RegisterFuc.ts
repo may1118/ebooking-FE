@@ -1,11 +1,34 @@
-import { ref } from 'vue';
+import { ref, getCurrentInstance } from 'vue';
+import { notification } from 'ant-design-vue';
 import { Rules,ValidateSource,ValidateOption  } from 'async-validator';
 
 import { UserConfig } from "@/@type/interfaceRegister";
 import { registerConfig } from "@/config/pages/register";
 
-export function clickGetEmailCode(...params: any) {
-  console.log("params: ", params);
+import { getEmailVertify } from '@/api/registerApi'
+
+export async function clickGetEmailCode(val: string, type: string) {
+  console.log(getCurrentInstance())
+  switch (type) {
+    case 'email':
+      const { code } = await getEmailVertify(val)
+      // success
+      if (code === 0) {
+        notification.open({
+          message: '发送成功',
+          description: '验证码5分钟内有效',
+        });  
+      } else {
+        notification.open({
+          message: '发送失败',
+          description: '请确认邮箱信息',
+        });  
+      }
+      break;
+  
+    default:
+      break;
+  }
 }
 
 
