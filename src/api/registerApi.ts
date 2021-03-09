@@ -17,9 +17,12 @@ export function getEmailVertify(email: string): Promise<any> {
   });
 }
 
-export function sendUserRegister(email: UserConfig) {
+export function sendUserRegister(userInfo: UserConfig): Promise<any> {
   return request({
-    url: '',
+    url: '/api/register',
     method: 'post',
+    data: {
+      ...userInfo
+    }
   });
 }

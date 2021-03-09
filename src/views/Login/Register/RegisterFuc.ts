@@ -1,14 +1,13 @@
 import { ref, getCurrentInstance } from 'vue';
 import { notification } from 'ant-design-vue';
-import { Rules,ValidateSource,ValidateOption  } from 'async-validator';
+import { Rules } from 'async-validator';
 
 import { UserConfig } from "@/@type/interfaceRegister";
 import { registerConfig } from "@/config/pages/register";
 
-import { getEmailVertify } from '@/api/registerApi'
+import { getEmailVertify, sendUserRegister } from '@/api/registerApi'
 
 export async function clickGetEmailCode(val: string, type: string) {
-  console.log(getCurrentInstance())
   switch (type) {
     case 'email':
       const { code } = await getEmailVertify(val)
@@ -28,6 +27,20 @@ export async function clickGetEmailCode(val: string, type: string) {
   
     default:
       break;
+  }
+}
+export async function clickRegister(userInfo: UserConfig) {
+  const data = await sendUserRegister(userInfo)
+  if (data.code === 0) {
+    notification.open({
+      message: '注册',
+      description: '注册成功',
+    });  
+  } else {
+    notification.open({
+      message: '注册失败',
+      description: '请再次确认',
+    });  
   }
 }
 

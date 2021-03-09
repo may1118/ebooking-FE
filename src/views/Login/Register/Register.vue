@@ -11,7 +11,7 @@
         layout="vertical"
         :model="reaRegisterInput"
         :rules="rules"
-        @finish="handleFinish"
+        @finish="clickRegister"
       >
         <!-- 账号 -->
         <a-form-item class="components-input-demo-presuffix" name="userName">
@@ -125,7 +125,7 @@ import { reactive } from 'vue';
 
 import { registerConfig } from '@/config/pages/register';
 import { UserConfig } from '@/@type/interfaceRegister';
-import { clickGetEmailCode, needGetInputRules } from './RegisterFuc';
+import { clickGetEmailCode, needGetInputRules, clickRegister } from './RegisterFuc';
 
 export default {
   setup() {
@@ -135,18 +135,13 @@ export default {
       userPasswordComfirm: 'mazhenyan1118',
       selectArea: 0,
       userPhone: '18890062982',
-      phoneVertifyCode: '123456',
+      phoneVertifyCode: '111111',
       userEmail: '1422073266@qq.com',
       emailVertifyCode: '',
     });
     const { rules, refPhoneIsVertify, refEmailIsVertify } = needGetInputRules(
       reaRegisterInput
     );
-
-    const handleFinish = (values: any) => {
-      // 发送请求
-      console.log(values)
-    };
 
     return {
       reaRegisterInput,
@@ -157,7 +152,7 @@ export default {
       refEmailIsVertify,
       // handle functions
       clickGetEmailCode,
-      handleFinish,
+      clickRegister,
     };
   },
   components: {
