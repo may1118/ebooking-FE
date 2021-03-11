@@ -1,4 +1,4 @@
-import { ref, getCurrentInstance } from 'vue';
+import { ref } from 'vue';
 import { notification } from 'ant-design-vue';
 import { Rules } from 'async-validator';
 
@@ -24,7 +24,10 @@ export async function clickGetEmailCode(val: string, type: string) {
         });  
       }
       break;
-  
+      case 'phone':
+        // clickGetEmailCodeOut函数暂时还没支持获取手机验证码
+        console.log('------>由于资金问题，暂时还没支持，统一使用【111111】')
+      break;
     default:
       break;
   }

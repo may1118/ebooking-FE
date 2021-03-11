@@ -76,8 +76,15 @@
         <a-form-item name="phoneVertifyCode">
           <div class="register-form-rawItem">
             <a-input v-model:value="reaRegisterInput.phoneVertifyCode" />
-            <a-button :disabled="!refPhoneIsVertify" type="primary">
+            <!-- <a-button :disabled="!refPhoneIsVertify" type="primary">
               {{ registerConfig.userGetVeritifyCode }}
+            </a-button> -->
+            <a-button
+              :disabled="!refPhoneIsVertify && phoneSeconds !== 0"
+              type="primary"
+              @click="clickGetEmailCode(reaRegisterInput.userPhone, 'phone')"
+            >
+              {{ phoneSeconds === 0 ? registerConfig.userGetVeritifyCode : phoneSeconds + '秒后重试' }}
             </a-button>
           </div>
         </a-form-item>
@@ -96,11 +103,11 @@
           <div class="register-form-rawItem">
             <a-input v-model:value="reaRegisterInput.emailVertifyCode" />
             <a-button
-              :disabled="!refEmailIsVertify"
+              :disabled="!refEmailIsVertify && emailSeconds !== 0"
               type="primary"
               @click="clickGetEmailCode(reaRegisterInput.userEmail, 'email')"
             >
-              {{ registerConfig.userGetVeritifyCode }}
+              {{ emailSeconds === 0 ? registerConfig.userGetVeritifyCode : emailSeconds + '秒后重试' }}
             </a-button>
           </div>
         </a-form-item>
@@ -121,11 +128,11 @@ import {
   LockOutlined,
   MailOutlined,
 } from '@ant-design/icons-vue';
-import { reactive } from 'vue';
+import { reactive, ref } from 'vue';
 
 import { registerConfig } from '@/config/pages/register';
 import { UserConfig } from '@/@type/interfaceRegister';
-import { clickGetEmailCode, needGetInputRules, clickRegister } from './RegisterFuc';
+import { clickGetEmailCode as clickGetEmailCodeOut, needGetInputRules, clickRegister } from './RegisterFuc';
 
 export default {
   setup() {
@@ -135,15 +142,50 @@ export default {
       userPasswordComfirm: 'mazhenyan1118',
       selectArea: 0,
       userPhone: '18890062982',
-      phoneVertifyCode: '111111',
+      phoneVertifyCode: '',
       userEmail: '1422073266@qq.com',
       emailVertifyCode: '',
     });
+    const emailSeconds = ref(0)
+    const phoneSeconds = ref(0)
     const { rules, refPhoneIsVertify, refEmailIsVertify } = needGetInputRules(
       reaRegisterInput
     );
 
+    const clickGetEmailCode = (val: string, type: string) => {
+      switch (type) {
+        case 'email':
+          emailSeconds.value = 60
+          clickGetEmailCodeOut(val, type)
+          // 开始计时，不断减少计时器的值
+          const intervalEmail = setInterval(() => {
+            if (emailSeconds.value === 0) {
+              clearInterval(intervalEmail)
+            } else {
+              emailSeconds.value--
+            }
+          }, 1000)
+          break;
+        case 'phone':
+          phoneSeconds.value = 60
+          clickGetEmailCodeOut(val, type) 
+          // 开始计时，不断减少计时器的值
+          const intervalPhone = setInterval(() => {
+            if (phoneSeconds.value === 0) {
+              clearInterval(intervalPhone)
+            } else {
+              phoneSeconds.value--
+            }
+          }, 1000)
+        default:
+          break;
+      }
+    }
+
     return {
+      // data
+      emailSeconds,
+      phoneSeconds,
       reaRegisterInput,
       registerConfig,
       // form rules
