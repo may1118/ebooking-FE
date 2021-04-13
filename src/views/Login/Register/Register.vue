@@ -1,8 +1,9 @@
 <template>
   <div class="register">
     <div class="register-header">
-      <span>易程 · 酒店</span>
-      商家入驻
+      <span>易程 · 用户注册</span>
+      <!-- <span>易程 · 酒店</span> -->
+      <!-- 商家入驻 -->
     </div>
     <div class="register-form">
       <div class="register-form-header">注册</div>
