@@ -1,18 +1,30 @@
-import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
-import Index from '../layout/Index.vue'
-import Login from '../layout/Login.vue'
+import { createRouter, createWebHashHistory, RouteRecordRaw } from 'vue-router';
+import Index from '../layout/Index.vue';
+import Login from '../layout/Login.vue';
+import Register from '../layout/Register.vue';
+import HotelRegister from '../layout/HotelRegister.vue';
 
 const routes: Array<RouteRecordRaw> = [
   {
-    path: "/",
-    name: "Index",
-    component: Index
+    path: '/',
+    name: 'Index',
+    component: Index,
   },
   {
-    path: "/login",
-    name: "Login",
-    component: Login
-  }
+    path: '/login',
+    name: 'Login',
+    component: Login,
+  },
+  {
+    path: '/register',
+    name: 'Register',
+    component: Register,
+  },
+  {
+    path: '/hotelRegister',
+    name: 'HotelRegister',
+    component: HotelRegister,
+  },
   // {
   //   path: "/about",
   //   name: "About",
@@ -26,7 +38,7 @@ const routes: Array<RouteRecordRaw> = [
 
 const router = createRouter({
   history: createWebHashHistory(),
-  routes
+  routes,
 });
 
 export default router;

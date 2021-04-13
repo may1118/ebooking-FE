@@ -1,10 +1,18 @@
 <template>
   <div class="login">
     <div class="login-header">
-      <p @click="changeLoginWay('account')" class="account-login">
+      <p
+        @click="changeLoginWay('account')"
+        :class="{ choosed: chooseAccount, 'account-login': true }"
+      >
         账号密码登陆
       </p>
-      <p @click="changeLoginWay('email')" class="emial-login">邮箱验证登陆</p>
+      <p
+        @click="changeLoginWay('email')"
+        :class="{ choosed: !chooseAccount, 'email-login': true }"
+      >
+        邮箱验证登陆
+      </p>
     </div>
     <a-form
       class="login-form-content"
@@ -28,57 +36,59 @@
         <a-form-item label="邮箱验证码" name="emailVertifyCode">
           <div class="login-form-email">
             <a-input v-model:value="loginForm.emailVertifyCode" />
-            <a-button style="margin-left: 10px;" type="primary">获取验证码</a-button>
+            <a-button style="margin-left: 10px;" type="primary"
+              >获取验证码</a-button
+            >
           </div>
         </a-form-item>
       </div>
-
-      <a-form-item>
+      <div class="comfirm-button">
         <a-button
           type="primary"
           class="login-btn"
-          :wrapper-col="{ span: 14, offset: 4 }"
           html-type="submit"
+          @click="handleLogin"
           >登陆</a-button
         >
-      </a-form-item>
+      </div>
+      <p class="forget">忘记账号/密码</p>
     </a-form>
   </div>
 </template>
 
 <script>
-import { reactive, ref } from "vue";
+import { reactive, ref } from 'vue';
 export default {
   setup() {
     const loginForm = reactive({
-      name: "",
-      password: "",
-      email: "",
-      emailVertifyCode: "",
+      name: '',
+      password: '',
+      email: '',
+      emailVertifyCode: '',
     });
     const rules = {};
     const layout = {
       labelCol: { span: 8 },
       wrapperCol: { span: 14 },
     };
-    const chooseAccount = ref(false)
+    const chooseAccount = ref(false);
 
     const changeLoginWay = (type) => {
       switch (type) {
-        case "account":
+        case 'account':
           chooseAccount.value = true;
-          console.log("choose account");
+          console.log('choose account');
           break;
-        case "email":
+        case 'email':
           chooseAccount.value = false;
-          console.log("choose email");
+          console.log('choose email');
           break;
         default:
           break;
       }
     };
     const handleLogin = () => {
-      console.log("click login btn");
+      console.log('click login btn');
     };
     return {
       // data
@@ -109,23 +119,33 @@ export default {
       color: @heading-color;
       cursor: pointer;
     }
+    .choosed {
+      color: @primary-color;
+    }
   }
 
   .login-form-content {
-
     .login-form-email {
       display: flex;
     }
     .login-btn {
       width: 200px;
     }
+    .forget {
+      float: right;
+      margin-right: 50px;
+      cursor: pointer;
+      color: @primary-color;
+    }
+  }
+  .comfirm-button {
+    display: flex;
+    justify-content: center;
   }
   overflow: hidden;
   float: right;
   width: 600px;
   margin-right: 20px;
   padding: 20px;
-
-  border: 1px solid red;
 }
 </style>

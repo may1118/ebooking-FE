@@ -85,7 +85,11 @@
               type="primary"
               @click="clickGetEmailCode(reaRegisterInput.userPhone, 'phone')"
             >
-              {{ phoneSeconds === 0 ? registerConfig.userGetVeritifyCode : phoneSeconds + '秒后重试' }}
+              {{
+                phoneSeconds === 0
+                  ? registerConfig.userGetVeritifyCode
+                  : phoneSeconds + '秒后重试'
+              }}
             </a-button>
           </div>
         </a-form-item>
@@ -108,13 +112,17 @@
               type="primary"
               @click="clickGetEmailCode(reaRegisterInput.userEmail, 'email')"
             >
-              {{ emailSeconds === 0 ? registerConfig.userGetVeritifyCode : emailSeconds + '秒后重试' }}
+              {{
+                emailSeconds === 0
+                  ? registerConfig.userGetVeritifyCode
+                  : emailSeconds + '秒后重试'
+              }}
             </a-button>
           </div>
         </a-form-item>
         <!-- 注册按钮 -->
         <a-form-item>
-          <a-button type="primary" html-type="submit">
+          <a-button type="primary" html-type="submit" style="width: 200px;">
             {{ registerConfig.userInputButton }}
           </a-button>
         </a-form-item>
@@ -133,7 +141,11 @@ import { reactive, ref } from 'vue';
 
 import { registerConfig } from '@/config/pages/register';
 import { UserConfig } from '@/@type/interfaceRegister';
-import { clickGetEmailCode as clickGetEmailCodeOut, needGetInputRules, clickRegister } from './RegisterFuc';
+import {
+  clickGetEmailCode as clickGetEmailCodeOut,
+  needGetInputRules,
+  clickRegister,
+} from './RegisterFuc';
 
 export default {
   setup() {
@@ -147,8 +159,8 @@ export default {
       userEmail: '1422073266@qq.com',
       emailVertifyCode: '',
     });
-    const emailSeconds = ref(0)
-    const phoneSeconds = ref(0)
+    const emailSeconds = ref(0);
+    const phoneSeconds = ref(0);
     const { rules, refPhoneIsVertify, refEmailIsVertify } = needGetInputRules(
       reaRegisterInput
     );
@@ -156,32 +168,32 @@ export default {
     const clickGetEmailCode = (val: string, type: string) => {
       switch (type) {
         case 'email':
-          emailSeconds.value = 60
-          clickGetEmailCodeOut(val, type)
+          emailSeconds.value = 60;
+          clickGetEmailCodeOut(val, type);
           // 开始计时，不断减少计时器的值
           const intervalEmail = setInterval(() => {
             if (emailSeconds.value === 0) {
-              clearInterval(intervalEmail)
+              clearInterval(intervalEmail);
             } else {
-              emailSeconds.value--
+              emailSeconds.value--;
             }
-          }, 1000)
+          }, 1000);
           break;
         case 'phone':
-          phoneSeconds.value = 60
-          clickGetEmailCodeOut(val, type) 
+          phoneSeconds.value = 60;
+          clickGetEmailCodeOut(val, type);
           // 开始计时，不断减少计时器的值
           const intervalPhone = setInterval(() => {
             if (phoneSeconds.value === 0) {
-              clearInterval(intervalPhone)
+              clearInterval(intervalPhone);
             } else {
-              phoneSeconds.value--
+              phoneSeconds.value--;
             }
-          }, 1000)
+          }, 1000);
         default:
           break;
       }
-    }
+    };
 
     return {
       // data
