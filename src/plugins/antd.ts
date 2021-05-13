@@ -14,7 +14,9 @@ import {
   Divider,
   Badge,
   BackTop,
-  Carousel
+  Carousel,
+  Cascader,
+  InputNumber,
 } from 'ant-design-vue'
 
 /**
@@ -40,4 +42,6 @@ export default function loadComponent(app: any) {
   app.use(BackTop)
   app.use(Badge)
   app.use(Carousel)
+  app.use(Cascader)
+  app.use(InputNumber)
 }
