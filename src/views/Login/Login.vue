@@ -46,7 +46,6 @@
         <a-button
           type="primary"
           class="login-btn"
-          html-type="submit"
           @click="handleLogin"
           >登陆</a-button
         >
@@ -58,6 +57,7 @@
 
 <script>
 import { reactive, ref } from 'vue';
+import { login } from '@/api/loginApi'
 export default {
   setup() {
     const loginForm = reactive({
@@ -71,7 +71,7 @@ export default {
       labelCol: { span: 8 },
       wrapperCol: { span: 14 },
     };
-    const chooseAccount = ref(false);
+    const chooseAccount = ref(true);
 
     const changeLoginWay = (type) => {
       switch (type) {
@@ -87,8 +87,16 @@ export default {
           break;
       }
     };
-    const handleLogin = () => {
-      console.log('click login btn');
+    const handleLogin = async () => {
+      const params = {}
+      if (chooseAccount.value) {
+        params.userName = loginForm.name
+        params.userPassword = loginForm.password
+      } else {
+        params.userEmail = loginForm.email
+        params.emailVertifyCode = loginForm.emailVertifyCode
+      }
+      await login(params)
     };
     return {
       // data
