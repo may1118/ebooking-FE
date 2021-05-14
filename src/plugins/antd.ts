@@ -17,6 +17,7 @@ import {
   Carousel,
   Cascader,
   InputNumber,
+  Collapse,
 } from 'ant-design-vue'
 
 /**
@@ -44,4 +45,5 @@ export default function loadComponent(app: any) {
   app.use(Carousel)
   app.use(Cascader)
   app.use(InputNumber)
+  app.use(Collapse)
 }

@@ -1,6 +1,8 @@
 <template>
   <div>
-    <router-view></router-view>
+    <div class="content">
+      
+    </div>
   </div>
 </template>
 
@@ -9,11 +11,7 @@ import { defineComponent, ref, getCurrentInstance, computed } from "vue";
 export default defineComponent({
   name: "Index",
   setup() {
-    const proxy = getCurrentInstance()?.proxy;
-    const contentId = computed(() => proxy?.$route.path);
-    return {
-      contentId
-    };
+    return {}
   },
 });
 </script>
