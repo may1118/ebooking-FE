@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div class="container">
     <router-view></router-view>
   </div>
 </template>
@@ -19,6 +19,7 @@ export default defineComponent({
 </script>
 
 <style lang="less" scoped>
-.content {
+.container {
+  margin: 0 10px;
 }
 </style>

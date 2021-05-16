@@ -18,6 +18,10 @@ import {
   Cascader,
   InputNumber,
   Collapse,
+  Radio,
+  Checkbox,
+  TimePicker,
+  Table,
 } from 'ant-design-vue'
 
 /**
@@ -46,4 +50,8 @@ export default function loadComponent(app: any) {
   app.use(Cascader)
   app.use(InputNumber)
   app.use(Collapse)
+  app.use(Radio)
+  app.use(Checkbox)
+  app.use(TimePicker)
+  app.use(Table)
 }
