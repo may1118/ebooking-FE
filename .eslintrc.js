@@ -16,6 +16,8 @@ module.exports = {
     '@typescript-eslint/no-var-requires': 0,
     'camelcase': 'off',
     '@typescript-eslint/camelcase': 'off',
+    "no-unused-vars": "off",
+    "@typescript-eslint/no-unused-vars": ["off"]
   },
   overrides: [
     {

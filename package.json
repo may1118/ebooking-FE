@@ -14,8 +14,9 @@
     "babel-plugin-import": "^1.13.3",
     "core-js": "^3.6.5",
     "path": "^0.12.7",
-    "qs": "^6.9.6",
+    "qs": "^6.10.1",
     "vue": "^3.0.0",
+    "vue-native-websocket-vue3": "^3.1.0",
     "vue-router": "^4.0.0-0",
     "vue3-player-video": "^1.2.5",
     "vuex": "^4.0.0-0"

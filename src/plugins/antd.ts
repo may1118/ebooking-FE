@@ -22,6 +22,7 @@ import {
   Checkbox,
   TimePicker,
   Table,
+  Modal,
 } from 'ant-design-vue'
 
 /**
@@ -54,4 +55,5 @@ export default function loadComponent(app: any) {
   app.use(Checkbox)
   app.use(TimePicker)
   app.use(Table)
+  app.use(Modal)
 }

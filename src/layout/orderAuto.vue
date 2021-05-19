@@ -3,7 +3,10 @@
     <div class="poiSelect">门店：{{ hotelName }}</div>
     <div class="orderAuto">
       <a-form :label-col="labelCol" :wrapper-col="wrapperCol">
-        <a-form-item label="开启状态" style="display: flex; align-items: center;">
+        <a-form-item
+          label="开启状态"
+          style="display: flex; align-items: center"
+        >
           <a-radio-group v-model:value="enableStatus">
             <a-radio :value="0">关闭</a-radio>
             <a-radio :value="1">开启</a-radio>
@@ -27,40 +30,53 @@
             <a-time-picker
               :disabled="isAllDay"
               v-model:value="acTime"
-              placeholder="请选择数量"
+              placeholder="请选择开始时间"
               format="HH:mm"
+              :minute-step="30"
+              valueFormat="HH:mm"
+              style="width: 200px"
             />
             至
             <a-time-picker
               :disabled="isAllDay"
               v-model:value="enTime"
-              placeholder="请选择数量"
+              placeholder="请选择结束时间"
               format="HH:mm"
+              :minute-step="30"
+              valueFormat="HH:mm"
+              style="width: 200px"
             />
           </a-form-item>
           <a-form-item label="自动接单房型">
             <div style="display: flex; flex-direction: column">
               <div
                 v-for="(item, index) of hotelConfig"
-                style="display: flex; margin-bottom: 5px; justify-content: space-around;"
+                style="
+                  display: flex;
+                  margin-bottom: 5px;
+                  justify-content: space-around;
+                "
                 :key="index"
               >
                 <a-checkbox v-model:checked="item.isAuto"></a-checkbox>
-                <div class="hotelName" style="margin:0 10px;">房型名：{{ item.name }}</div>
-                每天最多接单数: 
+                <div class="hotelName" style="margin: 0 10px">
+                  房型名：{{ item.name }}
+                </div>
+                每天最多接单数:
                 <a-input-number
-                style="margin-left: 10px;"
+                  style="margin-left: 10px"
                   v-model:value="item.autoNumber"
                   :min="0"
                   :max="item.number"
+                  :disabled="!item.isAuto"
                 />
               </div>
             </div>
           </a-form-item>
-          <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
-            <a-button type="primary" @click="onSubmit">保存</a-button>
-          </a-form-item>
         </div>
+        <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
+          <a-button type="primary" @click="onSubmit">保存</a-button>
+        </a-form-item>
       </a-form>
     </div>
   </div>
@@ -69,13 +85,15 @@
 <script>
 import { ref, onMounted, reactive, toRefs } from "vue";
 import { getCookies } from "@/config/commonFunc";
+import moment from "moment";
 
-import { getHotelBaseInfo } from "@/api/orderAuto";
+import { getHotelBaseInfo } from "@/api/userBase";
+import { saveHotelAuto } from "@/api/autoHotel";
 
 const weekdays = ["一", "二", "三", "四", "五", "六", "日"];
 const formatHotelConfig = (hotelConfigArr) => {
   return hotelConfigArr.map(({ name, number }) => {
-    return { 
+    return {
       name,
       number,
       isAuto: false,
@@ -83,23 +101,72 @@ const formatHotelConfig = (hotelConfigArr) => {
     };
   });
 };
+const zhDayToNum = (zhDay) => {
+  const zhDayObj = {
+    日: 7,
+    一: 1,
+    二: 2,
+    三: 3,
+    四: 4,
+    五: 5,
+    六: 6,
+  };
+  return zhDayObj[zhDay] || -1;
+};
+const formatAuto = (orderAutoForm, hotelConfig) => {
+  const {
+    enableStatus,
+    isAllDay,
+    acTime,
+    enTime,
+    availableWeek,
+  } = orderAutoForm;
+  const isAutoHotel = hotelConfig.filter((item) => {
+    if (item.isAuto && item.autoNumber) {
+      return true;
+    }
+  });
+  const res = {};
+  res.hotel_id = getCookies("hotel/hotel_id");
+  // 如果选择关闭 or 自动接单的房间数为0
+  if (!enableStatus || !isAutoHotel.length || !availableWeek.length) {
+    res.isAuto = false;
+  } else {
+    res.isAuto = true;
+    res.autoTime = isAllDay
+      ? "00:00:00-23:59:59"
+      : `${acTime.toString()}:00-${enTime.toString()}:59`;
+    res.autoDay = JSON.stringify(
+      availableWeek.map((item) => {
+        return zhDayToNum(item);
+      })
+    );
+    res.autoHotel = JSON.stringify(
+      isAutoHotel.map(({ autoNumber, name }) => {
+        return {
+          autoNumber,
+          name,
+        };
+      })
+    );
+  }
+  return res;
+};
 
 export default {
   name: "layout",
   setup() {
-    const uid = getCookies("hotel/hotel_id");
+    const hotel_id = getCookies("hotel/hotel_id");
     const hotelName = ref("-");
-    const hotelConfig = ref();
+    const hotelConfig = ref([]);
     const checkAll = ref(false);
 
     const orderAutoForm = reactive({
       enableStatus: 1,
       availableWeek: [],
-      availableTime: "",
-      roomTypes: [],
       isAllDay: true,
-      acTime: "",
-      enTime: "",
+      acTime: moment("00:00", "HH:mm"),
+      enTime: moment("23:59", "HH:mm"),
     });
 
     const onCheckAllChange = (e) => {
@@ -108,15 +175,20 @@ export default {
         availableWeek: isCheck ? weekdays : [],
       });
     };
-    const onSubmit = () => {
-      console.log('save.')
-    }
+    const onSubmit = async () => {
+      const formatForm = formatAuto(
+        Object.assign({}, orderAutoForm),
+        hotelConfig.value.slice()
+      );
+      const data = await saveHotelAuto(formatForm);
+      console.log(data);
+    };
 
     onMounted(async () => {
       const {
         hotel_name: hotel_nameRemote,
         hotel_base_config,
-      } = await getHotelBaseInfo({ uid });
+      } = await getHotelBaseInfo({ hotel_id });
       hotelName.value = hotel_nameRemote;
       hotelConfig.value = formatHotelConfig(JSON.parse(hotel_base_config));
     });

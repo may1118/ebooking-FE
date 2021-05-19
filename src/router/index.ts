@@ -6,6 +6,11 @@ import HotelRegister from '../layout/HotelRegister.vue';
 import Menu from '../layout/Menu.vue';
 import Bar from '../layout/Bar.vue'
 import Footer from '../layout/Footer.vue';
+import BuyRoom from '../layout/BuyRoom.vue';
+import user from '../layout/user.vue';
+
+import { getCookies } from "@/config/commonFunc";
+import { notification } from 'ant-design-vue';
 
 // content
 import workbench from '../layout/workbench.vue'
@@ -18,7 +23,7 @@ import hotelStudy from '../layout/hotelStudy.vue'
 const routes: Array<RouteRecordRaw> = [
   {
     path: '/ebooking/',
-    name: 'Index',
+    name: 'Ebooking',
     components: {
       default: Index,
       menu: Menu,
@@ -28,22 +33,32 @@ const routes: Array<RouteRecordRaw> = [
     children: [{
       path: 'workbench',
       component: workbench
-    },{
+    }, {
       path: 'consume-order',
       component: consumeOrder
-    },{
+    }, {
       path: 'order-auto',
       component: orderAuto
-    },{
+    }, {
       path: 'feedback',
       component: feedback
-    },{
+    }, {
       path: 'hos',
       component: hos
-    },{
+    }, {
       path: 'hotel-study',
       component: hotelStudy
     }]
+  },
+  {
+    path: '/',
+    name: 'Index',
+    component: BuyRoom,
+  },
+  {
+    path: '/user',
+    name: 'user',
+    component: user,
   },
   {
     path: '/login',
@@ -75,5 +90,22 @@ const router = createRouter({
   history: createWebHashHistory(),
   routes,
 });
+
+// 拦截路由
+router.beforeEach((to, from, next) => {
+  if (to.path.startsWith('/ebooking')) {
+    const isLogin = getCookies('user/login')
+    if (isLogin) {
+      next();
+    } else {
+      notification['error']({
+        message: '请登录',
+        description: '您还没有登陆哦～',
+      });
+      next({ path: '/login' });
+    }
+  }
+  next()
+})
 
 export default router;

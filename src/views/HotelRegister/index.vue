@@ -9,44 +9,7 @@
         <a-input v-model:value="formState.email"></a-input>
       </a-form-item>
       <a-form-item label="地区">
-        <a-select
-          style="width: 120px"
-          :value="formState.provice"
-          @change="(value) => handleChange('provice', value)"
-        >
-          <a-select-option
-            v-for="item of proviceArr"
-            :value="item.name"
-            :key="item.region_id"
-            >{{ item.name }}</a-select-option
-          >
-        </a-select>
-        <a-select
-          style="width: 120px"
-          :value="formState.city"
-          v-if="cityArr.length"
-          @change="(value) => handleChange('city', value)"
-        >
-          <a-select-option
-            v-for="item of cityArr"
-            :value="item.name"
-            :key="item.region_id"
-            >{{ item.name }}</a-select-option
-          >
-        </a-select>
-        <a-select
-          style="width: 120px"
-          :value="formState.district"
-          v-if="districtArr.length"
-          @change="(value) => handleChange('district', value)"
-        >
-          <a-select-option
-            v-for="item of districtArr"
-            :value="item.name"
-            :key="item.region_id"
-            >{{ item.name }}</a-select-option
-          >
-        </a-select>
+        <Region @getRegionLocal="handleRegionChange" />
       </a-form-item>
       <a-form-item label="酒店名称">
         <a-input v-model:value="formState.hotelName"></a-input>
@@ -71,10 +34,18 @@
             :max="10"
             placeholder="房间数"
           />
+          <a-input-number
+            style="flex-basis: 100px"
+            v-model:value="item.price"
+            :formatter="
+              (value) => `¥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
+            "
+            :parser="(value) => value.replace(/\$\s?|(,*)/g, '')"
+          />
           <PlusCircleOutlined
             @click="
               () => {
-                formState.config.push({ name: '', number: 1 });
+                formState.config.push({ name: '', number: 1, price: 100 });
               }
             "
           />
@@ -98,11 +69,13 @@
 import { defineComponent, onMounted, ref, reactive } from "vue";
 import { PlusCircleOutlined, MinusCircleOutlined } from "@ant-design/icons-vue";
 
+import Region from "@/components/region";
+
 import { hotelRegister, getRegion } from "@/api/hotelRegister";
 
 export default defineComponent({
   name: "HotelRegister",
-  components: { PlusCircleOutlined, MinusCircleOutlined },
+  components: { PlusCircleOutlined, MinusCircleOutlined, Region },
   setup() {
     const formState = reactive({
       phone: "",
@@ -116,47 +89,32 @@ export default defineComponent({
         {
           name: "",
           number: 1,
+          price: 100
         },
       ],
     });
-    const proviceArr = ref([]);
-    const cityArr = ref([]);
-    const districtArr = ref([]);
 
-    const handleChange = async (type, value) => {
-      switch (type) {
-        case "provice":
-          cityArr.value = await getRegion(value);
-          formState.provice = value;
-          break;
-        case "city":
-          districtArr.value = await getRegion(value);
-          formState.city = value;
-          break;
-        case "district":
-          formState.district = value;
-          break;
-      }
-    };
     const submit = async () => {
-      await hotelRegister({}, Object.assign(formState, {
-        config: JSON.stringify(formState.config)
-      }))
+      await hotelRegister(
+        {},
+        Object.assign(formState, {
+          config: JSON.stringify(formState.config),
+        })
+      );
     };
-    onMounted(async () => {
-      proviceArr.value = await getRegion();
-    });
+    const handleRegionChange = (provice, city, district) => {
+      formState.provice = provice;
+      formState.city = city;
+      formState.district = district;
+    };
     return {
       // data
       formState,
-      proviceArr,
-      cityArr,
-      districtArr,
       labelCol: { span: 4 },
       wrapperCol: { span: 14 },
       // func
-      handleChange,
       submit,
+      handleRegionChange,
     };
   },
 });

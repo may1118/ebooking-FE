@@ -9,7 +9,7 @@ const service = axios.create({
 service.interceptors.request.use(
   config => {
     // 加上cookie
-    if(config.method === 'post') {
+    if(config.method === 'post' || config.method === 'POST') {
       config.data = qs.stringify(config.data);
     }
 
