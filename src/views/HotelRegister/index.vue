@@ -1,23 +1,28 @@
 <template>
   <div class="HotelRegister">
     <h1 style="text-align: center">酒店信息注册</h1>
-    <a-form :model="formState" :label-col="labelCol" :wrapper-col="wrapperCol">
-      <a-form-item label="手机号码">
+    <a-form
+      :model="formState"
+      :label-col="labelCol"
+      :wrapper-col="wrapperCol"
+      @finish="submit"
+    >
+      <a-form-item required label="手机号码">
         <a-input v-model:value="formState.phone"></a-input>
       </a-form-item>
-      <a-form-item label="邮箱">
+      <a-form-item required label="邮箱">
         <a-input v-model:value="formState.email"></a-input>
       </a-form-item>
-      <a-form-item label="地区">
+      <a-form-item required label="地区">
         <Region @getRegionLocal="handleRegionChange" />
       </a-form-item>
-      <a-form-item label="酒店名称">
+      <a-form-item required label="酒店名称">
         <a-input v-model:value="formState.hotelName"></a-input>
       </a-form-item>
-      <a-form-item label="酒店基本描述">
+      <a-form-item required label="酒店基本描述">
         <a-input v-model:value="formState.des"></a-input>
       </a-form-item>
-      <a-form-item label="酒店房间类型">
+      <a-form-item required label="酒店房间类型">
         <div
           class="hotel-config"
           v-for="(item, index) of formState.config"
@@ -27,6 +32,7 @@
             v-model:value="item.name"
             placeholder="请输入房间名称"
           ></a-input>
+          <div style="flex-basis: 50px">数量:</div>
           <a-input-number
             id="inputNumber"
             v-model:value="item.number"
@@ -34,13 +40,10 @@
             :max="10"
             placeholder="房间数"
           />
+          <div style="flex-basis: 50px">价格:</div>
           <a-input-number
             style="flex-basis: 100px"
             v-model:value="item.price"
-            :formatter="
-              (value) => `¥ ${value}`.replace(/\B(?=(\d{3})+(?!\d))/g, ',')
-            "
-            :parser="(value) => value.replace(/\$\s?|(,*)/g, '')"
           />
           <PlusCircleOutlined
             @click="
@@ -59,7 +62,7 @@
         </div>
       </a-form-item>
       <a-form-item :wrapper-col="{ span: 14, offset: 4 }">
-        <a-button type="primary" @click="submit">确认</a-button>
+        <a-button html-type="submit" type="primary">确认</a-button>
         <a-button style="margin-left: 10px">取消</a-button>
       </a-form-item>
     </a-form>
@@ -67,6 +70,7 @@
 </template>
 <script>
 import { defineComponent, onMounted, ref, reactive } from "vue";
+import { useRouter } from "vue-router";
 import { PlusCircleOutlined, MinusCircleOutlined } from "@ant-design/icons-vue";
 
 import Region from "@/components/region";
@@ -77,6 +81,7 @@ export default defineComponent({
   name: "HotelRegister",
   components: { PlusCircleOutlined, MinusCircleOutlined, Region },
   setup() {
+    const router = useRouter();
     const formState = reactive({
       phone: "",
       email: "",
@@ -89,18 +94,20 @@ export default defineComponent({
         {
           name: "",
           number: 1,
-          price: 100
+          price: 100,
         },
       ],
     });
 
     const submit = async () => {
-      await hotelRegister(
-        {},
-        Object.assign(formState, {
-          config: JSON.stringify(formState.config),
-        })
-      );
+      try {
+        await hotelRegister(
+          Object.assign({}, formState, {
+            config: JSON.stringify(formState.config),
+          })
+        );
+        router.push("/ebooking/workbench");
+      } catch (error) {}
     };
     const handleRegionChange = (provice, city, district) => {
       formState.provice = provice;

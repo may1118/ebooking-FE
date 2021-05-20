@@ -32,14 +32,14 @@
       请选择需要的房间：
       <div
         v-for="(item, index) of choosedHotel.hotel_base_config"
-        :key="index"
+        :key="index + Math.random()"
         style="margin-bottom: 10px"
       >
         <a-checkbox
           style="margin-right: 10px"
           v-model:checked="item.checked"
         ></a-checkbox>
-        {{ item.name }}
+        {{ item.room_name }}
         <a-range-picker
           style="margin-right: 10px"
           format="YYYY-MM-DD"
@@ -52,8 +52,9 @@
           style="margin-right: 10px"
           v-model:value="item.needNumber"
           :min="1"
-          :max="item.number"
+          :max="item.room_number"
         />
+        ¥ {{ item.room_price }} 元 / 晚
       </div>
       <template #footer>
         <div v-show="price">¥{{ price }} :预计价格</div>
@@ -71,12 +72,12 @@
 
 <script>
 import { ref, reactive, onMounted, computed } from "vue";
-import { useRouter } from 'vue-router';
-import { notification } from 'ant-design-vue'
+import { useRouter } from "vue-router";
+import { notification } from "ant-design-vue";
 import moment from "moment";
 import { getCookies } from "@/config/commonFunc";
 import Region from "@/components/region.vue";
-import { buyRoom, comfirmBuy } from "@/api/buyRoom";
+import { buyRoom, comfirmBuy, getRoom } from "@/api/buyRoom";
 
 const formatTime = (time) => {
   const date = new Date(time);
@@ -116,7 +117,7 @@ export default {
   name: "layout",
   components: { Region },
   setup() {
-    const router = useRouter()
+    const router = useRouter();
     const formState = reactive({
       provice: "湖南省",
       city: "",
@@ -125,6 +126,7 @@ export default {
     const live_user_is_login = ref(getCookies("live_user/login"));
     const userName = ref(getCookies("live_user/name"));
     const userPhone = ref(getCookies("live_user/phone"));
+    const userId = ref(getCookies("live_user/id"));
     const hotels = ref([]);
     const showModal = ref(false);
     const choosedHotel = ref({});
@@ -142,32 +144,30 @@ export default {
         }
       });
       const { hotel } = await buyRoom(region.join("-"));
-      hotel.forEach((item) => {
-        item.hotel_base_config = JSON.parse(item.hotel_base_config).map(
-          (item) => {
-            return {
-              ...item,
-              needNumber: 1,
-              checked: false,
-            };
-          }
-        );
-      });
       hotels.value = [...hotel];
     };
-    const chooseHotel = (hotel) => {
+    const chooseHotel = async (hotel) => {
+      const room_info = await getRoom({ hotel_id: hotel.hotel_id });
+      room_info.map(item => {
+        return {
+          ...item,
+          needNumber: 1,
+          checked: false,
+        }
+      })
       showModal.value = true;
-      choosedHotel.value = hotel;
+      choosedHotel.value = Object.assign({}, hotel, {
+        hotel_base_config: room_info,
+      });
     };
     const handleModalClick = async (type) => {
       if (!live_user_is_login.value) {
-        notification['error']({
+        notification["error"]({
           message: "请登录",
-          description:
-            "登陆后才能购买",
+          description: "登陆后才能购买",
         });
-        router.push('/user')
-        return 
+        router.push("/user");
+        return;
       }
       switch (type) {
         case "confirm":
@@ -187,6 +187,7 @@ export default {
             hotel_base_config: hotel_base_config,
             userName: decodeURI(userName.value),
             userPhone: userPhone.value,
+            userId: userId.value,
           });
           await comfirmBuy({ hotel: JSON.stringify(hotelInfo) });
           break;
@@ -204,7 +205,7 @@ export default {
             item.timeRange
           ) {
             mon +=
-              item.price * item.needNumber * getTimeRangeDay(item.timeRange);
+              item.room_price * item.needNumber * getTimeRangeDay(item.timeRange);
           }
         });
         return mon;

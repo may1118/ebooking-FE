@@ -17,3 +17,11 @@ export function comfirmBuy(data: any): any {
     data
   })
 }
+
+export function getRoom(data: any): any {
+  return request({
+    method: 'POST',
+    url: '/api/buyRoom/getRoom',
+    data
+  })
+}
