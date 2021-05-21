@@ -148,13 +148,13 @@ export default {
     };
     const chooseHotel = async (hotel) => {
       const room_info = await getRoom({ hotel_id: hotel.hotel_id });
-      room_info.map(item => {
+      room_info.map((item) => {
         return {
           ...item,
           needNumber: 1,
           checked: false,
-        }
-      })
+        };
+      });
       showModal.value = true;
       choosedHotel.value = Object.assign({}, hotel, {
         hotel_base_config: room_info,
@@ -189,7 +189,28 @@ export default {
             userPhone: userPhone.value,
             userId: userId.value,
           });
-          await comfirmBuy({ hotel: JSON.stringify(hotelInfo) });
+          try {
+            const data = await comfirmBuy({ hotel: JSON.stringify(hotelInfo) });
+            if (!data) {
+              notification["success"]({
+                message: "购买成功",
+                description: "欢迎您入住～",
+              });
+            } else {
+              data.room.forEach(item => {
+                const { room } = item
+                notification["error"]({
+                  message: "购买失败",
+                  description: `【${ room.room_name }】房间量不够，请重新选择`
+                })
+              })
+            }
+          } catch (error) {
+            notification["error"]({
+              message: "购买失败",
+              description: error,
+            });
+          }
           break;
       }
       showModal.value = false;
@@ -205,7 +226,9 @@ export default {
             item.timeRange
           ) {
             mon +=
-              item.room_price * item.needNumber * getTimeRangeDay(item.timeRange);
+              item.room_price *
+              item.needNumber *
+              getTimeRangeDay(item.timeRange);
           }
         });
         return mon;
