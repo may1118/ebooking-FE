@@ -16,11 +16,13 @@
   .left {
     flex-basis: 200px;
     flex: 0 0 20%;
+    min-height: 100vh;
   }
   .right {
     flex: 1;
     display: flex;
     flex-direction: column;
+    width: calc(100vh - 200px);
     .Bar {
       flex-basis: 70px;
     }

@@ -7,7 +7,7 @@
           title="Sure to delete?"
           @confirm="onDelete(record.key)"
         >
-          <a>Delete</a>
+          <a>操作</a>
         </a-popconfirm>
       </template>
     </a-table>
@@ -22,11 +22,29 @@ export default {
     return {
       dataSource: [
         {
+          key: "2",
+          hotel_live_name: "临湖大床房",
+          hotel_live_time: "2021/5/10 - 2021/5/12",
+          live_price: 200,
+          live_user_name: "马**",
+          status: "订单已完成",
+          operator: "operator",
+        },
+        {
+          key: "3",
+          hotel_live_name: "临湖大床房",
+          hotel_live_time: "2021/5/10 - 2021/5/12",
+          live_price: 200,
+          live_user_name: "马**",
+          status: "订单已取消",
+          operator: "operator",
+        },
+        {
           key: "1",
           hotel_live_name: "临湖大床房",
-          hotel_live_time: "2021/5/15 - 2021/5/16",
+          hotel_live_time: "2021/6/1 - 2021/6/10",
           live_price: 200,
-          live_user_name: "马某某",
+          live_user_name: "马**",
           status: "等待入住",
           operator: "operator",
         },
@@ -61,7 +79,7 @@ export default {
         {
           title: "操作",
           dataIndex: "operator",
-          slots: { customRender: 'operation' },
+          slots: { customRender: "operation" },
         },
       ],
     };

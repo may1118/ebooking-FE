@@ -23,4 +23,8 @@ export const menuList = [
     name: "酒店学习",
     content: "hotel-study"
   },
+  {
+    name: "入住数据分析",
+    content: "live-data-analysis"
+  }
 ];

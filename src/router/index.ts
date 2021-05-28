@@ -19,6 +19,7 @@ import orderAuto from '../layout/orderAuto.vue'
 import feedback from '../layout/feedback.vue'
 import hos from '../layout/hos.vue'
 import hotelStudy from '../layout/hotelStudy.vue'
+import liveDataAnalysis from '../layout/liveDataAnalysis.vue'
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -48,6 +49,9 @@ const routes: Array<RouteRecordRaw> = [
     }, {
       path: 'hotel-study',
       component: hotelStudy
+    }, {
+      path: 'live-data-analysis',
+      component: liveDataAnalysis
     }]
   },
   {
