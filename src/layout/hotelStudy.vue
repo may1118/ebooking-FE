@@ -1,21 +1,12 @@
 <template>
   <div class="layout">
-    <div class="display: flex; margin: 0 20px;">
+    <div v-for="item of video" :key="item.study_id">
       <VuePlayerVideo
         class="videoPlay"
-        src="https://media.vued.vanthink.cn/sparkle_your_name_am720p.mp4"
+        :src="item.study_url"
       ></VuePlayerVideo>
-      <div style="margin-left: 20px;">
-        酒店学习酒店学习酒店学习酒店学习酒店学习酒店学习酒店学习酒店学习
-      </div>
-    </div>
-    <div class="display: flex; margin: 0 20px;">
-      <VuePlayerVideo
-        class="videoPlay"
-        src="https://media.vued.vanthink.cn/sparkle_your_name_am720p.mp4"
-      ></VuePlayerVideo>
-      <div style="margin-left: 20px;">
-        酒店学习酒店学习酒店学习酒店学习酒店学习酒店学习酒店学习酒店学习
+      <div style="margin-left: 20px">
+        {{ item.study_des }}
       </div>
     </div>
   </div>
@@ -23,14 +14,22 @@
 
 <script lang="ts">
 import VuePlayerVideo from "vue3-player-video";
-import { ref } from "vue";
+import { ref, onMounted, Ref } from "vue";
+import { getStudyVideo } from "@/api/studyVideo";
 export default {
   name: "layout",
   components: {
     VuePlayerVideo,
   },
   setup() {
-    return {};
+    const video: Ref<any[]> = ref([]);
+
+    onMounted(async () => {
+      const data: any = await getStudyVideo();
+      video.value = data
+    });
+
+    return { video };
   },
 };
 </script>
@@ -38,9 +37,12 @@ export default {
 <style lang="less" scoped>
 .layout {
   display: flex;
+  flex-wrap: wrap;
+  margin-top: 10px;
   .videoPlay {
-    width: 500px;
-    height: 300px;
+    width: 400px;
+    height: 250px;
+    margin: 0 10px;
   }
 }
 </style>
