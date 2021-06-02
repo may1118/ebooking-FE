@@ -23,6 +23,7 @@ import {
   TimePicker,
   Table,
   Modal,
+  Popconfirm,
 } from 'ant-design-vue'
 
 /**
@@ -56,4 +57,5 @@ export default function loadComponent(app: any) {
   app.use(TimePicker)
   app.use(Table)
   app.use(Modal)
+  app.use(Popconfirm)
 }
