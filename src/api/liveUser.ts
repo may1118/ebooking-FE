@@ -15,7 +15,7 @@ export function userCancelOrder(data: any) {
   })
 }
 
-export function userComment(data: any) {
+export function addComment(data: any) {
   return request({
     method: 'post',
     url: '/api/addComment',

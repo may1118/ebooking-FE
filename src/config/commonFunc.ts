@@ -17,6 +17,5 @@ export function getCookies(cname: string) {
 export const formatTime = (time) => {
   const date = new Date(time);
   if (date.toString() === "Invalid Date") return "-";
-
-  return `${date.getFullYear()}/${date.getMonth() + 1}/${date.getDate()}`;
+  return `${date.getFullYear()}/ ${date.getMonth() + 1}/ ${date.getDate()}`;
 };

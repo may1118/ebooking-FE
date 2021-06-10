@@ -1,14 +1,16 @@
 <template>
   <div class="layout">
     <div class="hosScore">
-      <span>云塘大酒店商家， 您的HOS评分：</span>
-      <span class="score">4.5 分</span>
-      <span class="level">高</span>
+      <span>{{ name }}商家您好， 您的HOS评分：</span>
+      <span class="score">{{ score }} 分</span>
+      <span class="level">{{ getLevel(score) }}</span>
     </div>
     <div class="hosAdvantage" style="display: flex; flex-direction: column">
       <span>守约规范：</span>
-      <span>1. 您在2021/5/20 成功完成订单</span>
-      <span>2. 您在2021/5/22 回复用户评论</span>
+      <span v-for="(detail, index) of detail" :key="index">
+        {{ index + 1 }}. {{ formatTime(Number(detail.hosTime))
+        }}{{ detail.hos_des }}
+      </span>
     </div>
     <div class="hosAdvantage" style="display: flex; flex-direction: column">
       <p>更快提高HOS评分方法</p>
@@ -28,11 +30,37 @@
 </template>
 
 <script lang="ts">
-import { ref } from "vue";
+import { ref, onMounted } from "vue";
+import { getHosList } from "@/api/hos";
+import { formatTime, getCookies } from "@/config/commonFunc";
+import { getHotelBaseInfo } from '@/api/userBase';
+const getLevel = (score) => {
+  let level = "";
+  if (score >= 0 && score <= 2) {
+    level = "低";
+  } else if (score > 2 && score <= 4) {
+    level = "中";
+  } else if (score > 4 && score <= 5) {
+    level = "高";
+  }
+  return level;
+};
 export default {
   name: "layout",
   setup() {
-    return {};
+    const hotel_id = getCookies('hotel/hotel_id')
+    const name = ref('')
+    const score = ref(-1);
+    const detail = ref([]);
+    onMounted(async () => {
+      const { hosScore, hosDetail }: any = await getHosList();
+      const { hotel_name }: any = await getHotelBaseInfo({ hotel_id })
+
+      score.value = hosScore;
+      detail.value = hosDetail;
+      name.value = hotel_name
+    });
+    return { name, score, detail, formatTime, getLevel };
   },
 };
 </script>

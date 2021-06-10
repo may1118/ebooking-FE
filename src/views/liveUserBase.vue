@@ -18,7 +18,13 @@
             @click="handleClick(record, 'COMMENT')"
             >评论</a
           >
-          <a v-if="record.status === 2 && record.comment">show comment</a>
+          <a
+            v-if="record.status === 2 && record.comment"
+            @click="handleClick(record, 'COMMENT')"
+            style="display: flex; align-items: center"
+            >查看评论
+            <SmileOutlined v-if="record?.comment[0]?.hotelComment" style="margin-left: 5px;" />
+          </a>
         </template>
       </a-table>
     </div>
@@ -45,7 +51,22 @@
           <a-button @click="confirmComment" type="primary">确认</a-button>
         </div>
       </div>
-      <div v-else>
+      <div v-else class="hotelComment">
+        您的评论： {{ comment?.comment[0]?.content }}
+        <br />
+        评论时间：
+        {{ formatTime(Number(comment?.comment[0]?.comment_time)) }}
+
+        <div
+          v-if="comment?.comment[0]?.hotelComment"
+          style="background-color: #eee; padding: 10px"
+        >
+          商家回复： {{ comment?.comment[0]?.hotelComment }}
+          <br />
+          回复时间：{{
+            formatTime(Number(comment?.comment[0]?.hotelCommentTime))
+          }}
+        </div>
       </div>
     </a-modal>
   </div>
@@ -54,20 +75,31 @@
 <script lang="ts">
 import { ref, onMounted, Ref } from "vue";
 import { getCookies, formatTime } from "@/config/commonFunc";
-import { getUserOrder, userCancelOrder, userComment } from "@/api/liveUser";
+import { getUserOrder, userCancelOrder, addComment } from "@/api/liveUser";
+import { notification } from "ant-design-vue";
+import { SmileOutlined } from "@ant-design/icons-vue";
 
 export default {
   name: "views",
+  components: { SmileOutlined },
   setup() {
     const userName = ref(getCookies("live_user/name"));
     const userPhone = ref(getCookies("live_user/phone"));
-    const userId = ref(getCookies("live_user/id"))
+    const userId = ref(getCookies("live_user/id"));
 
     const order: Ref<any> = ref([]);
 
     const modalComment = ref(false);
     const comment: Ref<any> = ref({
       needComment: false,
+      comment: [
+        {
+          content: "-",
+          comment_time: "-",
+          hotelComment: null,
+          hotelCommentTime: "-",
+        },
+      ],
     });
     const commentValue = ref("");
 
@@ -121,9 +153,21 @@ export default {
         from_id: userId.value,
         to_id: comment.value.hotel_id,
         content: commentValue.value,
-        comment_type: 'USER'
+        comment_type: "USER",
+      };
+      try {
+        await addComment(commentData);
+        notification["success"]({
+          message: "评论成功",
+          description: "感谢您的评价",
+        });
+        changeModal("close");
+      } catch (error) {
+        notification["error"]({
+          message: "评论失败",
+          description: "请重试",
+        });
       }
-      await userComment(commentData)
     };
 
     onMounted(async () => {
@@ -176,6 +220,11 @@ export default {
 </script>
 
 <style lang="less" scoped>
-.views {
+.hotelComment {
+  display: flex;
+  flex-direction: column;
+  background: rgba(9, 188, 164, 0.06);
+  padding: 12px;
+  text-align: left;
 }
 </style>
