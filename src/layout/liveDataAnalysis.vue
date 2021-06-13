@@ -1,76 +1,160 @@
 <template>
   <div class="layout">
-    <div class="pr-3 pl-3">
-      <p>近一年收益情况：</p>
-      <div id="container" style="width: 800px" class="pt-2"></div>
-    </div>
+    <a-select v-model:value="choosedChart" style="width: 300px">
+      <a-select-option
+        v-for="(item, index) of charts"
+        :key="index"
+        :value="item.value"
+        >{{ item.name }}</a-select-option
+      >
+    </a-select>
+    <template v-for="item of charts" :key="item.value">
+      <div :id="item.value" v-if="choosedChart === item.value" style="width: 800px; margin: 10px 0;"></div>
+    </template>
   </div>
 </template>
 
 <script lang="ts">
-import Vue, { defineComponent, onMounted } from "vue";
+import { defineComponent, onMounted, ref, watch } from "vue";
 import { Line, Datum } from "@antv/g2plot";
+
+import { getData } from "@/api/liveDataAnalysis";
+
+const charts = [
+  {
+    value: "year-income",
+    name: "近一年收益",
+  },
+  {
+    value: "sell-hotel",
+    name: "近一年销售状况",
+  },
+];
 
 export default defineComponent({
   setup(props, context) {
-    const data = [
-      { month: "1", value: 300 },
-      { month: "2", value: 400 },
-      { month: "3", value: 300.5 },
-      { month: "4", value: 500 },
-      { month: "5", value: 400.9 },
-      { month: "6", value: 600 },
-      { month: "7", value: 700 },
-      { month: "8", value: 900 },
-      { month: "9", value: 1300 },
-      { month: "10", value: 5300 },
-      { month: "11", value: 1300 },
-      { month: "12", value: 12300 },
-    ];
+    const choosedChart = ref(charts[1].value);
 
-    onMounted(() => {
-      const line = new Line("container", {
-        data,
-        xField: "month",
-        yField: "value",
-        height: 300,
-        point: {
-          size: 2,
-          shape: "diamond",
-          style: {
-            stroke: "#FE740C",
-            lineWidth: 1,
-            fillOpacity: 0.6,
-          },
-        },
-        annotations: [
-          {
-            type: "text",
-            position: ["95%", "100%"],
-            content: "月",
-            style: {
-              fill: "red",
-            },
-            top: true,
-          },
-          {
-            type: "text",
-            position: ["0%", "0%"],
-            content: "元",
-            style: {
-              fill: "red",
-            },
-            top: true,
-          },
-        ],
-        tooltip: {
-          formatter: (datum: Datum) => {
-            return { name: datum.month + "月", value: datum.value + "元" };
-          },
-        },
-      });
+    const newLine = (config) => {
+      const line = new Line(choosedChart.value, config);
       line.render();
-    });
+    };
+
+    watch(
+      () => choosedChart.value,
+      async (newChart) => {
+        const data: any = await getData({
+          type: newChart,
+          year: 2021,
+        });
+        switch (newChart) {
+          case "year-income":
+            const config = {
+              data: Object.keys(data).map((item) => {
+                return {
+                  month: item,
+                  value: data[item],
+                };
+              }),
+              xField: "month",
+              yField: "value",
+              height: 300,
+              point: {
+                size: 2,
+                shape: "diamond",
+                style: {
+                  stroke: "#FE740C",
+                  lineWidth: 1,
+                  fillOpacity: 0.6,
+                },
+              },
+              annotations: [
+                {
+                  type: "text",
+                  position: ["98%", "100%"],
+                  content: "月",
+                  style: {
+                    color: "#1890ff",
+                  },
+                  top: true,
+                },
+                {
+                  type: "text",
+                  position: ["0%", "0%"],
+                  content: "元",
+                  style: {
+                    color: "#1890ff",
+                  },
+                  top: true,
+                },
+              ],
+              tooltip: {
+                formatter: (datum: Datum) => {
+                  return {
+                    name: datum.month + "月",
+                    value: datum.value + "元",
+                  };
+                },
+              },
+            };
+            newLine(config);
+            break;
+          case "sell-hotel":
+            const configSellHotel = {
+              data: Object.keys(data).map((item) => {
+                return {
+                  month: item,
+                  value: data[item],
+                };
+              }),
+              xField: "month",
+              yField: "value",
+              height: 300,
+              point: {
+                size: 2,
+                shape: "diamond",
+                style: {
+                  stroke: "#FE740C",
+                  lineWidth: 1,
+                  fillOpacity: 0.6,
+                },
+              },
+              annotations: [
+                {
+                  type: "text",
+                  position: ["98%", "100%"],
+                  content: "月",
+                  style: {
+                    color: "#1890ff",
+                  },
+                  top: true,
+                },
+                {
+                  type: "text",
+                  position: ["0%", "0%"],
+                  content: "间夜量",
+                  style: {
+                    color: "#1890ff",
+                  },
+                  top: true,
+                },
+              ],
+              tooltip: {
+                formatter: (datum: Datum) => {
+                  return {
+                    name: datum.month + "月",
+                    value: datum.value + "间夜量",
+                  };
+                },
+              },
+            };
+            newLine(configSellHotel);
+            break;
+        }
+      },
+      { immediate: true }
+    );
+    return { choosedChart, charts };
   },
 });
 </script>
@@ -79,5 +163,8 @@ export default defineComponent({
 
 <style lang="less" scoped>
 .layout {
+  #container {
+    margin: 10px 0;
+  }
 }
 </style>

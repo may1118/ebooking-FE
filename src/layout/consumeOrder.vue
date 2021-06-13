@@ -18,6 +18,13 @@
                 接受订单
               </a-menu-item>
               <a-menu-item
+                v-if="[1].includes(record.status)"
+                @click="handleClick(record, 'FINISH-ORDER')"
+                key="FINISH-ORDER"
+              >
+                已完成订单
+              </a-menu-item>
+              <a-menu-item
                 v-if="[0].includes(record.status)"
                 @click="handleClick(record, 'LIVED')"
                 key="LIVED"
@@ -26,8 +33,8 @@
               </a-menu-item>
               <a-menu-item
                 v-if="record.status === 0"
-                @click="handleClick(record, 'LIVED')"
-                key="LIVED"
+                @click="handleClick(record, 'recieveOrder')"
+                key="recieveOrder"
               >
                 拒绝订单
               </a-menu-item>
@@ -98,11 +105,19 @@ export default {
     const getOrderInfo = async () => {
       const data: any = await getOrder();
       order.value = data.map((item) => {
-        const { live_time, leave_time, order_time, statusContent, is_auto_order } = item;
+        const {
+          live_time,
+          leave_time,
+          order_time,
+          statusContent,
+          is_auto_order,
+        } = item;
 
         return {
           ...item,
-          statusContent: is_auto_order ? '【自动接单～】' + statusContent : statusContent,
+          statusContent: is_auto_order
+            ? "【自动接单～】" + statusContent
+            : statusContent,
           order_time: formatTime(order_time),
           hotel_live_time: `${formatTime(live_time)} - ${formatTime(
             leave_time
@@ -138,7 +153,6 @@ export default {
               h("p", `用户电话: ${userDetail.phone}`),
             ]),
           });
-
           break;
         case "LIVED":
           await changeOrderStatus({
@@ -152,6 +166,14 @@ export default {
             live_id: key,
             status: 0,
           });
+          await getOrderInfo();
+          break;
+        case "FINISH-ORDER":
+          await changeOrderStatus({
+            live_id: key,
+            status: 2,
+          });
+          await getOrderInfo();
           break;
       }
     };

@@ -29,7 +29,7 @@
             v-if="record.status === 2 && record.comment"
             @click="handleClick(record, 'COMMENT')"
             style="display: flex; align-items: center"
-            >查看评论
+            >评论
             <SmileOutlined
               v-if="record?.comment[0]?.hotelComment"
               style="margin-left: 5px"
@@ -138,13 +138,9 @@ export default {
         case "COMMENT":
           const commentObj: any = {
             ...order,
+            needComment: commentRemote.length ? false : true
           };
-          // 证明之前没有评论过，需要用户评论
-          if (!commentRemote) {
-            commentObj.needComment = true;
-          }
-          comment.value = commentObj;
-
+          comment.value = commentObj
           modalComment.value = true;
           break;
       }
@@ -159,9 +155,9 @@ export default {
     // 确认评论
     const confirmComment = async () => {
       const commentData = {
-        live_id: comment.value.key,
+        live_id: comment.value.comment.key,
         from_id: userId.value,
-        to_id: comment.value.hotel_id,
+        to_id: comment.value.comment.hotel_id,
         content: commentValue.value,
         comment_type: "USER",
       };
