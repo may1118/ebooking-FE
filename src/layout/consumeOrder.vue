@@ -11,7 +11,14 @@
           <template #overlay>
             <a-menu v-if="record.status === 0 || record.status !== 2">
               <a-menu-item
-                v-if="record.status === 0"
+                v-if="record.status === -1"
+                @click="handleClick(record, 'recieveOrder')"
+                key="recieveOrder"
+              >
+                接受订单
+              </a-menu-item>
+              <a-menu-item
+                v-if="[0].includes(record.status)"
                 @click="handleClick(record, 'LIVED')"
                 key="LIVED"
               >
@@ -43,11 +50,12 @@
 </template>
 
 <script lang="ts">
-import { ref, onMounted, Ref,  h } from "vue";
-import { Modal } from 'ant-design-vue';
+import { ref, onMounted, Ref, h, watch } from "vue";
+import { useRouter } from "vue-router";
+import { Modal } from "ant-design-vue";
 import { DownOutlined } from "@ant-design/icons-vue";
 import { getOrder, changeOrderStatus, getUserInfo } from "@/api/order";
-import { formatTime } from '@/config/commonFunc'
+import { formatTime } from "@/config/commonFunc";
 
 const columns = [
   {
@@ -85,14 +93,16 @@ export default {
   name: "layout",
   components: { DownOutlined },
   setup() {
+    const router = useRouter();
     const order: Ref<any> = ref([]);
     const getOrderInfo = async () => {
       const data: any = await getOrder();
       order.value = data.map((item) => {
-        const { live_time, leave_time, order_time } = item;
+        const { live_time, leave_time, order_time, statusContent, is_auto_order } = item;
 
         return {
           ...item,
+          statusContent: is_auto_order ? '【自动接单～】' + statusContent : statusContent,
           order_time: formatTime(order_time),
           hotel_live_time: `${formatTime(live_time)} - ${formatTime(
             leave_time
@@ -100,6 +110,12 @@ export default {
         };
       });
     };
+    watch(
+      () => router.currentRoute.value,
+      async () => {
+        await getOrderInfo();
+      }
+    );
     onMounted(async () => {
       await getOrderInfo();
     });
@@ -118,8 +134,8 @@ export default {
           Modal.info({
             title: "用户详细个人信息",
             content: h("div", {}, [
-              h("p", `用户姓名: ${ userDetail.name }`),
-              h("p", `用户电话: ${ userDetail.phone }`),
+              h("p", `用户姓名: ${userDetail.name}`),
+              h("p", `用户电话: ${userDetail.phone}`),
             ]),
           });
 
@@ -130,6 +146,12 @@ export default {
             status: 1,
           });
           await getOrderInfo();
+          break;
+        case "recieveOrder":
+          await changeOrderStatus({
+            live_id: key,
+            status: 0,
+          });
           break;
       }
     };

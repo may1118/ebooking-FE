@@ -36,17 +36,14 @@
         <a-form-item label="邮箱验证码" name="emailVertifyCode">
           <div class="login-form-email">
             <a-input v-model:value="loginForm.emailVertifyCode" />
-            <a-button style="margin-left: 10px;" type="primary"
+            <a-button style="margin-left: 10px" type="primary"
               >获取验证码</a-button
             >
           </div>
         </a-form-item>
       </div>
       <div class="comfirm-button">
-        <a-button
-          type="primary"
-          class="login-btn"
-          @click="handleLogin"
+        <a-button type="primary" class="login-btn" html-type="submit"
           >登陆</a-button
         >
       </div>
@@ -56,17 +53,44 @@
 </template>
 
 <script>
-import { reactive, ref } from 'vue';
-import { login } from '@/api/loginApi'
+import { reactive, ref } from "vue";
+import { login } from "@/api/loginApi";
 export default {
   setup() {
     const loginForm = reactive({
-      name: '',
-      password: '',
-      email: '',
-      emailVertifyCode: '',
+      name: "",
+      password: "",
+      email: "",
+      emailVertifyCode: "",
     });
-    const rules = {};
+    const rules = {
+      name: [
+        {
+          required: true,
+          message: "请输入",
+          trigger: "blur",
+        },
+        { min: 1, max: 20, message: "仅限20个字符", trigger: "blur" },
+      ],
+      password: [
+        {
+          required: true,
+          message: "请输入",
+          trigger: "blur",
+        },
+      ],
+      email: [
+        {
+          required: true,
+          message: "请输入正确邮箱",
+          trigger: "blur",
+          type: "email",
+        },
+      ],
+      emailVertifyCode: [
+        { required: true, message: "请输入", trigger: "blur" },
+      ],
+    };
     const layout = {
       labelCol: { span: 8 },
       wrapperCol: { span: 14 },
@@ -75,28 +99,28 @@ export default {
 
     const changeLoginWay = (type) => {
       switch (type) {
-        case 'account':
+        case "account":
           chooseAccount.value = true;
-          console.log('choose account');
+          console.log("choose account");
           break;
-        case 'email':
+        case "email":
           chooseAccount.value = false;
-          console.log('choose email');
+          console.log("choose email");
           break;
         default:
           break;
       }
     };
     const handleLogin = async () => {
-      const params = {}
+      const params = {};
       if (chooseAccount.value) {
-        params.userName = loginForm.name
-        params.userPassword = loginForm.password
+        params.userName = loginForm.name;
+        params.userPassword = loginForm.password;
       } else {
-        params.userEmail = loginForm.email
-        params.emailVertifyCode = loginForm.emailVertifyCode
+        params.userEmail = loginForm.email;
+        params.emailVertifyCode = loginForm.emailVertifyCode;
       }
-      await login(params)
+      await login(params);
     };
     return {
       // data

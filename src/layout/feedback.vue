@@ -63,12 +63,14 @@ export default {
 
     const getCommentAllMounted = async () => {
       const data: any = await getCommentAll();
+      const updateComment: any = []
       // todo 需要对信息进行整合，将live_id一样的进行合并展示，只有USER则可以回复
       data.forEach((item: any) => {
         if (item.comment_type === "USER") {
-          userComment.value.push(item);
+          updateComment.push(item);
         }
       });
+      userComment.value = updateComment
     };
 
     const handleClick = async (type, value?) => {

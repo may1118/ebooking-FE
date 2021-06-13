@@ -1,6 +1,13 @@
 <template>
   <div class="views">
-    这是 【{{ decodeURI(userName) }}】 的个人中心
+    <router-link to="/">
+      <span style="display: flex; align-items: center">
+        <LeftOutlined />返回主页
+      </span>
+    </router-link>
+    <span style="display: flex; justify-content: center"
+      >用户 【{{ decodeURI(userName) }}】 的个人中心</span
+    >
     <div>
       <p>个人订单：</p>
       <a-table :dataSource="order" :columns="columns">
@@ -23,7 +30,10 @@
             @click="handleClick(record, 'COMMENT')"
             style="display: flex; align-items: center"
             >查看评论
-            <SmileOutlined v-if="record?.comment[0]?.hotelComment" style="margin-left: 5px;" />
+            <SmileOutlined
+              v-if="record?.comment[0]?.hotelComment"
+              style="margin-left: 5px"
+            />
           </a>
         </template>
       </a-table>
@@ -77,11 +87,11 @@ import { ref, onMounted, Ref } from "vue";
 import { getCookies, formatTime } from "@/config/commonFunc";
 import { getUserOrder, userCancelOrder, addComment } from "@/api/liveUser";
 import { notification } from "ant-design-vue";
-import { SmileOutlined } from "@ant-design/icons-vue";
+import { SmileOutlined, LeftOutlined } from "@ant-design/icons-vue";
 
 export default {
   name: "views",
-  components: { SmileOutlined },
+  components: { SmileOutlined, LeftOutlined },
   setup() {
     const userName = ref(getCookies("live_user/name"));
     const userPhone = ref(getCookies("live_user/phone"));
@@ -220,6 +230,9 @@ export default {
 </script>
 
 <style lang="less" scoped>
+.views {
+  padding: 10px;
+}
 .hotelComment {
   display: flex;
   flex-direction: column;

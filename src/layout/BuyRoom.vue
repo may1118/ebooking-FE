@@ -273,6 +273,9 @@ export default {
     flex-basis: 300px;
     flex-direction: column;
     border: 1px solid #eee;
+    img {
+      height: 180px;
+    }
   }
 }
 </style>
