@@ -84,6 +84,7 @@
 
 <script>
 import { ref, onMounted, reactive, toRefs } from "vue";
+import { notification } from "ant-design-vue";
 import { getCookies } from "@/config/commonFunc";
 import moment from "moment";
 
@@ -114,13 +115,8 @@ const zhDayToNum = (zhDay) => {
   return zhDayObj[zhDay] || -1;
 };
 const formatAuto = (orderAutoForm, hotelConfig) => {
-  const {
-    enableStatus,
-    isAllDay,
-    acTime,
-    enTime,
-    availableWeek,
-  } = orderAutoForm;
+  const { enableStatus, isAllDay, acTime, enTime, availableWeek } =
+    orderAutoForm;
   const isAutoHotel = hotelConfig.filter((item) => {
     if (item.isAuto && item.autoNumber) {
       return true;
@@ -180,15 +176,23 @@ export default {
         Object.assign({}, orderAutoForm),
         hotelConfig.value.slice()
       );
-      const data = await saveHotelAuto(formatForm);
-      console.log(data);
+      try {
+        await saveHotelAuto(formatForm);
+        notification["success"]({
+          message: "修改成功",
+          description: "已更新自动接单数据",
+        });
+      } catch (error) {
+        notification["error"]({
+          message: "更新失败",
+          description: `请重试`,
+        });
+      }
     };
 
     onMounted(async () => {
-      const {
-        hotel_name: hotel_nameRemote,
-        hotel_base_config,
-      } = await getHotelBaseInfo({ hotel_id });
+      const { hotel_name: hotel_nameRemote, hotel_base_config } =
+        await getHotelBaseInfo({ hotel_id });
       hotelName.value = hotel_nameRemote;
       hotelConfig.value = formatHotelConfig(JSON.parse(hotel_base_config));
     });

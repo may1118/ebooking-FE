@@ -36,8 +36,12 @@
         <a-form-item label="邮箱验证码" name="emailVertifyCode">
           <div class="login-form-email">
             <a-input v-model:value="loginForm.emailVertifyCode" />
-            <a-button style="margin-left: 10px" type="primary"
-              >获取验证码</a-button
+            <a-button
+              style="margin-left: 10px"
+              type="primary"
+              @click="getVertify"
+              :disabled="buttonEmail || emailSeconds"
+              >{{ refEmail }}</a-button
             >
           </div>
         </a-form-item>
@@ -53,16 +57,21 @@
 </template>
 
 <script>
-import { reactive, ref } from "vue";
+import { reactive, ref, watch, } from "vue";
+import { useRouter } from "vue-router";
 import { login } from "@/api/loginApi";
+import { notification } from "ant-design-vue";
+import { getEmailVertify } from "@/api/registerApi";
 export default {
   setup() {
+    const router = useRouter();
     const loginForm = reactive({
       name: "",
       password: "",
-      email: "",
+      email: "1422073266@qq.com",
       emailVertifyCode: "",
     });
+    const refEmail = ref("获取验证码");
     const rules = {
       name: [
         {
@@ -95,7 +104,9 @@ export default {
       labelCol: { span: 8 },
       wrapperCol: { span: 14 },
     };
-    const chooseAccount = ref(true);
+    const chooseAccount = ref(false);
+    const emailSeconds = ref(0)
+    const buttonEmail = ref(false);
 
     const changeLoginWay = (type) => {
       switch (type) {
@@ -120,17 +131,54 @@ export default {
         params.userEmail = loginForm.email;
         params.emailVertifyCode = loginForm.emailVertifyCode;
       }
-      await login(params);
+      try {
+        await login(params);
+        router.replace(`/ebooking/workbench`)
+      } catch (error) {
+        notification.open({
+          message: "登陆失败",
+          description: "请确认相关信息",
+        });
+      }
     };
+    const getVertify = async () => {
+      try {
+        await getEmailVertify(loginForm.email);
+        notification.open({
+          message: "发送成功",
+          description: "验证码5分钟内有效",
+        });
+        emailSeconds.value = 60;
+        setInterval(() => {
+          emailSeconds.value--
+          refEmail.value = `${ emailSeconds.value }后重新获取`
+        }, 1 * 1000);
+      } catch (error) {
+        notification.open({
+          message: "发送失败",
+          description: "请确认邮箱信息",
+        });
+      }
+    };
+    watch(() => loginForm.email, (newEmail) => {
+      const regex = /^[a-z\d]+(\.[a-z\d]+)*@([\da-z](-[\da-z])?)+(\.{1,2}[a-z]+)+$/ig
+      buttonEmail.value = !regex.test(newEmail)
+    }, {
+      immediate: true
+    })
     return {
       // data
+      refEmail,
       loginForm,
       rules,
       layout,
       chooseAccount,
+      emailSeconds,
+      buttonEmail,
       // function
       changeLoginWay,
       handleLogin,
+      getVertify,
     };
   },
 };

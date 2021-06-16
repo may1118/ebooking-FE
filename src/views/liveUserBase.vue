@@ -155,9 +155,9 @@ export default {
     // 确认评论
     const confirmComment = async () => {
       const commentData = {
-        live_id: comment.value.comment.key,
+        live_id: comment.value.key,
         from_id: userId.value,
-        to_id: comment.value.comment.hotel_id,
+        to_id: comment.value.hotel_id,
         content: commentValue.value,
         comment_type: "USER",
       };

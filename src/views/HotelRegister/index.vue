@@ -6,20 +6,21 @@
       :label-col="labelCol"
       :wrapper-col="wrapperCol"
       @finish="submit"
+      :rules="rules"
     >
-      <a-form-item required label="手机号码">
+      <a-form-item required label="手机号码" name="phone">
         <a-input v-model:value="formState.phone"></a-input>
       </a-form-item>
-      <a-form-item required label="邮箱">
+      <a-form-item required label="邮箱" name="email">
         <a-input v-model:value="formState.email"></a-input>
       </a-form-item>
-      <a-form-item required label="地区">
+      <a-form-item label="地区">
         <Region @getRegionLocal="handleRegionChange" />
       </a-form-item>
-      <a-form-item required label="酒店名称">
+      <a-form-item required label="酒店名称" name="hotelName">
         <a-input v-model:value="formState.hotelName"></a-input>
       </a-form-item>
-      <a-form-item required label="酒店基本描述">
+      <a-form-item required label="酒店基本描述" name="des">
         <a-input v-model:value="formState.des"></a-input>
       </a-form-item>
       <a-form-item required label="酒店房间类型">
@@ -77,6 +78,45 @@ import Region from "@/components/region";
 
 import { hotelRegister, getRegion } from "@/api/hotelRegister";
 
+const rules = {
+  phone: [
+    {
+      required: true,
+      message: "请输入",
+      trigger: "blur",
+    },
+    {
+      pattern: /^1(?:3\d|4[4-9]|5[0-35-9]|6[67]|7[013-8]|8\d|9\d)\d{8}$/,
+      message: "请输入正确的电话号码",
+    },
+  ],
+  email: [
+    {
+      required: true,
+      message: "请输入",
+      trigger: "blur",
+    },
+    {
+      type: "email",
+      message: "请输入正确的邮箱",
+    },
+  ],
+  hotelName: [
+    {
+      required: true,
+      message: "请输入",
+      trigger: "blur",
+    },
+  ],
+  des: [
+    {
+      required: true,
+      message: "请输入",
+      trigger: "blur",
+    },
+  ],
+};
+
 export default defineComponent({
   name: "HotelRegister",
   components: { PlusCircleOutlined, MinusCircleOutlined, Region },
@@ -116,6 +156,7 @@ export default defineComponent({
     };
     return {
       // data
+      rules,
       formState,
       labelCol: { span: 4 },
       wrapperCol: { span: 14 },
